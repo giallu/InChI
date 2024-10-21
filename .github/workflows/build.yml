@@ -73,9 +73,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: inchi-${{ matrix.slug }}-${{ github.sha }}
+          path: builddir
       - run: |
           pwd
           ls -l
+          ls -l builddir
 
       - name: Install test dependencies
         run: |
