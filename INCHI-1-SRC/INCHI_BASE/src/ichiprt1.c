@@ -497,8 +497,6 @@ typedef enum tagAuxLblBit
     AL_REC_ = 1 << AL_REC__ORD
 } AUX_LBL_BIT;
 
-const int MAX_TAG_NUM = inchi_max( (short) IL_MAX_ORD, (short) AL_MAX_ORD ); /* djb-rwth: fixing MSVC warning C5287 */
-
 char *szGetTag( const INCHI_TAG *Tag, int nTag, int bTag, char *szTag, int *bAlways );
 
 #define SP(N)        (x_space+sizeof(x_space)-1-(N))
@@ -2091,6 +2089,7 @@ char *szGetTag( const INCHI_TAG *Tag,
                 int             *bAlways )
 {
     int i, j, bit, num, len;
+    const int MAX_TAG_NUM = (Tag == AuxLbl) ? AL_MAX_ORD : ((Tag == IdentLbl) ? IL_MAX_ORD : 0);
     if (0 < nTag && nTag < 3)
     {
         /* no plain text comments: pick up the last tag */
@@ -2101,7 +2100,7 @@ char *szGetTag( const INCHI_TAG *Tag,
                 j = i;
             }
         }
-        if (j >= 0)
+        if (j >= 0 && j < MAX_TAG_NUM)
         {
 #if USE_BCF
             int stl1, stl2, dstsz;
@@ -2137,7 +2136,7 @@ char *szGetTag( const INCHI_TAG *Tag,
                     strcat(szTag, Tag[i].szPlainComment);
                 }
             }
-            if (num)
+            if (num && j >= 0 && j < MAX_TAG_NUM)
             {
                 strcat(szTag, "}");
                 num = (int) strlen( Tag[j].szPlainLabel );
